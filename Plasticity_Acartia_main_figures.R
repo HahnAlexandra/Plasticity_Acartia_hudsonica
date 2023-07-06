@@ -16,7 +16,7 @@ library(Hmisc)
 library(Rmisc)
 
 #import full data set
-assays <- read.csv("~/Documents/Scripts/Thesis/assays2.csv", sep=";", header = TRUE)
+assays <- read.csv("~/Documents/Scripts/Thesis/data.csv", sep=";", header = TRUE)
 assays <- assays[-c(1, 59, 136, 246), ]#remove dead or inactive
 assays <-  assays[!(is.na(assays$collection)),]#remove potential NA values created when importing
 
