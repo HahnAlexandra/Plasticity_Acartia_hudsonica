@@ -1,7 +1,9 @@
 ##########################################################
-##                       CTmax                          ##
+##                     Main Figures                     ##
 ##                   Alexandra Hahn                     ##
 ##########################################################
+
+#main figures for Seasonal plasticity in Acartia hudsonica
 
 setwd("~/Documents/Scripts/Thesis")
 
