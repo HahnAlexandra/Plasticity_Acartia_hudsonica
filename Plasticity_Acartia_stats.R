@@ -12,12 +12,16 @@ library(car)
 library(emmeans)
 library(multcomp)
 library(multcompView)
+library(lme4)
+library(sjPlot)
+library(gridExtra)
 
 #import full data set
 assays <- read.csv("~/Documents/Scripts/Thesis/data.csv", sep=";", header = TRUE)
 assays <- assays[-c(1, 59, 136, 246), ]#remove dead or inactive
 assays <-  assays[!(is.na(assays$collection)),]#remove potential NA values created when importing
 
+####data preparation####
 
 #run for prep 
 {
@@ -51,6 +55,34 @@ assays <-  assays[!(is.na(assays$collection)),]#remove potential NA values creat
 } 
 
 
+####holistic models####
+
+#full model with random effects
+m0 <- lmer(Ctmax~treatment*collection* sex_confirmed*length + (1|vial_number)+ (1|time_assay) + (1|tank_side),
+           data = hudsonica)
+summary(m0)
+Anova(m0, type = 3)
+
+# this visualizes the "random effects"
+p <- plot_model(m0, type = "re", facet.grid=FALSE) 
+grid.arrange(p[[1]], p[[2]], p[[3]])# no visible strong effects....
+
+#random effects do not improve model fit --> drop random effects
+
+#final model after model testing and comparing biological relevance
+m <- lm(Ctmax~collection*treatment + sex_confirmed + length, data = hudsonica)
+summary(m)
+Anova(m, singular.ok = T, type = 3)#length not significant
+
+hist(resid(m))#normal distribution
+ols_test_normality(m)#Kolmogorov-Smirnov for observation > 50, not sig = normal distribution
+ols_test_correlation(m)#correlation between observed and expected residuals (under normality)
+
+par(mfrow = c(2,2))
+plot(m)
+par(mfrow = c(1,1))
+
+durbinWatsonTest(m)#no autocorrelation if p > 0.05
 
 ####Figure 1####
 #models for Ctmax and length
@@ -105,7 +137,7 @@ hudsonica %>%
 
 #model
 intF2 <- interaction(hudsonica$treatment, hudsonica$collection)
-mF2 <- lm(Ctmax ~ intF2, data = data)
+mF2 <- lm(Ctmax ~ intF2, data = hudsonica)
 summary(mF2)
 Anova(mF2, type = 3)
 boxplot(Ctmax ~intF2, data = hudsonica)
@@ -234,7 +266,48 @@ Anova(m_rnorm_l2, type = 3, singular.ok = TRUE)#no interaction
 pairs(emmeans(m_rnorm_l2, ~collection|treatment))#significantly different
 
 #### Figure 4 ####
+data_cw <- hudsonica %>%
+  dplyr::filter(treatment != "wild")%>%
+  dplyr::filter(collection != "2" | treatment != "cold")
 
+data_c <- data_cw %>%
+  dplyr::filter(treatment == "cold")#cold F1 excluding col 2
 
+data_w <- data_cw %>%
+  dplyr::filter(treatment == "warm")#warm F1
 
+#model and correlations for wild
+mF4_wi <- lm(Ctmax~length + sex_confirmed, data = wild2)
+summary(mF4_wi)
+Anova(mF4_wi, type = 3)
+hist(resid(mF4_wi))
 
+cor.test(wild2$Ctmax, wild2$length, method = "spearman")
+cor.test(wild2$Ctmax, wild2$length)
+
+#model and correlations for warm and cold
+mF4 <- lm(Ctmax~length + sex_confirmed, data = data_cw)
+summary(mF4)
+Anova(mF4, type = 3)
+hist(resid(mF4))
+
+cor.test(data_F7$Ctmax, data_cw$length, method = "spearman")
+cor.test(data_F7$Ctmax, data_cw$length)
+
+#model and correlations for cold
+mF4_c <- lm(Ctmax~length + sex_confirmed, data = data_c)
+summary(mF4_c)
+Anova(mF4_c, type = 3)
+hist(resid(mF4_c))
+
+cor.test(data_c$Ctmax, data_c$length, method = "spearman")#spearman's p 
+cor.test(data_c$Ctmax, data_c$length)
+
+#model and correlations for warm
+mF4_wa <- lm(Ctmax~length + sex_confirmed, data = data_w)
+summary(mF4_wa)
+Anova(mF4_wa, type = 3)
+hist(resid(mF4_wa))
+
+cor.test(data_w$Ctmax, data_w$length, method = "spearman")#spearman's p 
+cor.test(data_w$Ctmax, data_w$length)
