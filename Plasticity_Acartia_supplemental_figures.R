@@ -282,7 +282,7 @@ p_exp$Date <- paste(p_exp$Year, p_exp$Month, p_exp$Day, sep = "-")
 p_exp$Date <- as.Date(p_exp$Date) 
 
 #temperature
-S9_t <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = Temp..degC))+
+S9_A <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = Temp..degC))+
   geom_point()+
   scale_y_reverse()+
   scale_color_gradientn(colors = wes_palette("Zissou1", type = "continuous"))+
@@ -292,7 +292,7 @@ S9_t <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = Temp..degC))+
 
 ##salinity
 
-S9_s <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = SALIN..ppt))+
+S9_B <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = SALIN..ppt))+
   geom_point()+
   scale_y_reverse()+
   scale_color_gradientn(colors = wes_palette("Zissou1", type = "continuous"))+
@@ -300,4 +300,5 @@ S9_s <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = SALIN..ppt))+
   labs(title = "Salinity at sampling dates",
        y = "Depth [m]", x = "Month", color = "Salinity [ppt]")
 
-plot_grid(S9_t, S9_s, ncol = 1)
+dev.new()
+plot_grid(S9_A, S9_B, ncol = 1, labels = c("A", "B"))
