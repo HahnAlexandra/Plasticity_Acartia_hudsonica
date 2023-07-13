@@ -191,6 +191,10 @@ ggplot(wild2, aes(y = Ctmax, x = X2.week_mean, col = X2.week_mean))+
   ylab("Critical thermal maximum in °C")+
   xlab("Mean SST in °C")
 
+cor.test(wild2$X2.week_mean, wild2$Ctmax, method = "spearman")
+mS3 <- lm(Ctmax ~ X2.week_mean, data = wild2)
+summary(mS3)
+
 #### Figure S.4 - effects of developmental temperature ####
 
 #Ctmax
@@ -205,6 +209,10 @@ S4_A <- ggplot(hudsonica, aes(y = Ctmax, x = X2.week_mean, col = sex_confirmed))
   xlab("Developmental temperature in °C")+
   ylab(expression("CT"["max"]* " in °C"))
 
+mS4_A <- lm(Ctmax ~ X2.week_mean + sex_confirmed, data = hudsonica)
+summary(mS4_A)
+Anova(mS4_A, type = 3)
+
 #length
 S4_B <- ggplot(hudsonica, aes(y = length, x = X2.week_mean, col = sex_confirmed))+
   geom_point(aes(shape = generation), size = 2.75)+
@@ -216,6 +224,10 @@ S4_B <- ggplot(hudsonica, aes(y = length, x = X2.week_mean, col = sex_confirmed)
   theme(legend.position = "none")+
   xlab("Developmental temperature in °C")+
   ylab("Prosome length in µm")
+
+mS4_B <- lm(length ~ X2.week_mean + sex_confirmed, data = hudsonica)
+summary(mS4_B)
+Anova(mS4_B, type = 3)
 
 #combine plots and plot in new window
 dev.new()

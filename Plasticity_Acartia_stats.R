@@ -94,6 +94,8 @@ summary(mF1b); Anova(mF1b, type = 3)
 
 #model means and compact letters, post-hoc test
 #Ctmax
+cor.test(wild2$X2.week_mean, wild2$Ctmax, method = "spearman")#spearman correlation 0.758
+
 wild2 %>% 
   group_by(collection) %>% 
   dplyr::summarise(mean = mean(Ctmax), sd = sd(Ctmax))#gives means and sd
@@ -111,6 +113,8 @@ mmF1_cld <- cld(object = mmF1,
 mmF1_cld
 
 #length
+cor.test(wild2$X2.week_mean, wild2$length, method = "spearman")#spearman correlation -0.572
+
 wild2 %>% 
   filter(is.na(wild2$length) == FALSE) %>%
   group_by(collection) %>% 
@@ -144,7 +148,7 @@ boxplot(Ctmax ~intF2, data = hudsonica)
 
 #compact letters
 mmF2 <- emmeans(object = mF2,
-                specs = "intF5")#gets adjusted and weighted means per group
+                specs = "intF2")#gets adjusted and weighted means per group
 
 mmF2_cld <- cld(object = mmF2,
                 adjust = "holm",
@@ -163,6 +167,14 @@ par(mfrow = c(1,1))
 
 durbinWatsonTest(mF2)#no autocorrelation if p > 0.05
 
+#post hoc test
+pairwise.t.test(hudsonica$Ctmax, hudsonica$collection:hudsonica$treatment, p.adjust ="holm")
+
+summary(glht(model= mF2, linfct= mcp(intF2 = "Tukey")))
+
+ph_F2 <- contrast(mmF2, method = "tukey")#pairwise comparison
+summary(ph_F2)$p.value#summary of p-values
+
 #for length
 hudsonica %>% 
   filter( is.na(hudsonica$length) == FALSE) %>%
@@ -176,7 +188,7 @@ boxplot(length ~intF2, data = hudsonica)
 
 
 mmF2b <- emmeans(object = mF2b,
-                 specs = "intF5")#gets adjusted and weighted means per group
+                 specs = "intF2")#gets adjusted and weighted means per group
 
 mmF2b_cld <- cld(object = mmF2b,
                  adjust = "holm",
@@ -195,9 +207,17 @@ par(mfrow = c(1,1))
 
 durbinWatsonTest(mF2b)#no autocorrelation if p > 0.05
 
+#post hoc test
+pairwise.t.test(hudsonica$length, hudsonica$collection:hudsonica$treatment, p.adjust ="holm")
+
+summary(glht(model= mm2b, linfct= mcp(intF2 = "Tukey")))
+
+ph_F2b <- contrast(mmF2b, method = "tukey")#pairwise comparison
+pval_F2b <- summary(ph_F2b)$p.value#summary of p-values
+
+
 #### Figure 3####
 rnorm <- assays[which(assays$treatment != "wild" & assays$species != "tonsa"),]
-rnorm_stat  <- rnorm[which(rnorm$collection != "5"),]#excluding col-5 bc it has no warm data
 
 #slopes for Ctmax
 models <- lapply(unique(rnorm_stat$collection), function(col) {
@@ -291,8 +311,8 @@ summary(mF4)
 Anova(mF4, type = 3)
 hist(resid(mF4))
 
-cor.test(data_F7$Ctmax, data_cw$length, method = "spearman")
-cor.test(data_F7$Ctmax, data_cw$length)
+cor.test(data_cw$Ctmax, data_cw$length, method = "spearman")
+cor.test(data_cw$Ctmax, data_cw$length)
 
 #model and correlations for cold
 mF4_c <- lm(Ctmax~length + sex_confirmed, data = data_c)
