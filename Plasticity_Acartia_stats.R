@@ -84,6 +84,25 @@ par(mfrow = c(1,1))
 
 durbinWatsonTest(m)#no autocorrelation if p > 0.05
 
+m_l <- lm(length~collection*treatment + sex_confirmed, data = hudsonica)
+summary(m_l)
+Anova(m_l, singular.ok = T, type = 3)
+
+hist(resid(m_l))#normal distribution
+
+par(mfrow = c(2,2))
+plot(m_l)
+par(mfrow = c(1,1))
+
+#effects of developmental temperature
+m1 <- lm(Ctmax ~ X2.week_mean + sex_confirmed, data = hudsonica)
+summary(m1)
+Anova(m1, singular.ok = T, type = 3)
+
+m2 <- lm(length ~ X2.week_mean + sex_confirmed, data = hudsonica)
+summary(m2)
+Anova(m2, singular.ok = T, type = 3)
+
 ####Figure 1####
 #models for Ctmax and length
 mF1 <- lm(Ctmax ~ collection, data = wild2)
@@ -210,7 +229,7 @@ durbinWatsonTest(mF2b)#no autocorrelation if p > 0.05
 #post hoc test
 pairwise.t.test(hudsonica$length, hudsonica$collection:hudsonica$treatment, p.adjust ="holm")
 
-summary(glht(model= mm2b, linfct= mcp(intF2 = "Tukey")))
+summary(glht(model= mF2b, linfct= mcp(intF2 = "Tukey")))
 
 ph_F2b <- contrast(mmF2b, method = "tukey")#pairwise comparison
 pval_F2b <- summary(ph_F2b)$p.value#summary of p-values
