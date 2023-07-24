@@ -1,9 +1,7 @@
 ##########################################################
-##                     Main Figures                     ##
+##                       CTmax                          ##
 ##                   Alexandra Hahn                     ##
 ##########################################################
-
-#main figures for Seasonal plasticity in Acartia hudsonica
 
 setwd("~/Documents/Scripts/Thesis")
 
@@ -180,9 +178,9 @@ rnorm <- assays[which(assays$treatment != "wild" & assays$species != "tonsa"),]
 
 #reaction norm for length
 rn_length <- ggplot(rnorm, aes(y = length, x = treatment, col = collection))+
-  stat_summary_bin(fun=mean, geom="line", aes(group = collection), size = 0.75)  + 
+  stat_summary_bin(fun=mean, geom="line", aes(group = collection), linewidth = 0.75)  + 
   scale_color_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
-  stat_summary(fun=mean, geom="point", size = 2)+
+  stat_summary(fun=mean, geom="point", size = 2.75)+
   stat_summary(fun.data = mean_cl_normal, geom="errorbar", width=0.05, size=0.75)+
   theme_light(base_size = 14)+
   geom_point(alpha = 0.2, position = position_dodge(0.1))+
@@ -190,11 +188,12 @@ rn_length <- ggplot(rnorm, aes(y = length, x = treatment, col = collection))+
   ylab("Prosome length in µm") + xlab("Treatment")+
   theme(legend.position = "none")
 
+
 #reaction norm for Ctmax
 rn_ctmax <- ggplot(rnorm, aes(y = Ctmax, x = treatment, col = collection))+
-  stat_summary_bin(fun=mean, geom="line", aes(group = collection), size = 0.75)  + 
+  stat_summary_bin(fun=mean, geom="line", aes(group = collection), linewidth = 0.75)  + 
   scale_color_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
-  stat_summary(fun=mean, geom="point", size = 2)+
+  stat_summary(fun=mean, geom="point", size = 2.75)+
   stat_summary(fun.data = mean_cl_normal, geom="errorbar", width=0.05, size=0.75)+
   theme_light(base_size = 14)+
   geom_point(alpha = 0.2, position = position_dodge(0.1))+
@@ -222,7 +221,7 @@ data_cw <- hudsonica %>%
   
 
 wild <- ggplot(wild2, aes(y = Ctmax, x = length, col = sex_confirmed))+
-  geom_point(aes(shape = generation), size = 2.75)+
+  geom_point(size = 2.75, alpha = 0.5)+
   geom_smooth(method = "lm", aes(group = sex_confirmed, col = sex_confirmed, fill = sex_confirmed))+
   scale_color_manual(values = c("#D5968F","#CFD4EB"), name = "sex")+
   scale_fill_manual(values = c("#D5968F","#CFD4EB"), name = "sex")+
@@ -236,7 +235,7 @@ wild <- ggplot(wild2, aes(y = Ctmax, x = length, col = sex_confirmed))+
 
 
 cold_warm <- ggplot(data_cw, aes(y = Ctmax, x = length, col = sex_confirmed))+
-  geom_point(shape = 17, size = 2.75)+
+  geom_point(shape = 17, size = 2.75, alpha = 0.4)+
   facet_wrap(~treatment)+
   theme_light(base_size = 9)+
   theme(strip.background =element_rect(fill="white"))+
@@ -258,5 +257,6 @@ legend4 <- get_legend(ggplot(assays, aes(y = Ctmax, x = length, col = sex_confir
                         theme(legend.position = "bottom"))
 
 dev.new()
-plot_grid(wild, cold_warm, legend4, nrow = 3 , rel_heights  = c(5/10, 4/10, 1/10))
+plotsF4 <- plot_grid(wild, cold_warm, nrow = 2, labels = c("A", "B", "C"))
+plot_grid(plotsF4, legend4, nrow = 2 , rel_heights  = c(9/10, 1/10))
 
