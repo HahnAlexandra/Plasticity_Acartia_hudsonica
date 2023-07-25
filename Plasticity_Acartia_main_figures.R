@@ -223,10 +223,10 @@ data_cw <- hudsonica %>%
 wild <- ggplot(wild2, aes(y = Ctmax, x = length, col = sex_confirmed))+
   geom_point(size = 2.75, alpha = 0.5)+
   geom_smooth(method = "lm", aes(group = sex_confirmed, col = sex_confirmed, fill = sex_confirmed))+
-  scale_color_manual(values = c("#D5968F","#CFD4EB"), name = "sex")+
+  scale_color_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
   scale_fill_manual(values = c("#D5968F","#CFD4EB"), name = "sex")+
   facet_wrap(~treatment)+
-  theme_light(base_size = 9)+
+  theme_light(base_size = 10)+
   theme(strip.background =element_rect(fill="white"))+
   theme(strip.text = element_text(colour = 'black', size = 10))+
   theme(legend.position = "none")+
@@ -237,12 +237,12 @@ wild <- ggplot(wild2, aes(y = Ctmax, x = length, col = sex_confirmed))+
 cold_warm <- ggplot(data_cw, aes(y = Ctmax, x = length, col = sex_confirmed))+
   geom_point(shape = 17, size = 2.75, alpha = 0.4)+
   facet_wrap(~treatment)+
-  theme_light(base_size = 9)+
+  theme_light(base_size = 10)+
   theme(strip.background =element_rect(fill="white"))+
   theme(strip.text = element_text(colour = 'black', size = 10))+
   geom_smooth(method = "lm", aes(group = sex_confirmed, col = sex_confirmed, fill = sex_confirmed))+
-  scale_color_manual(values = c("#D5968F","#CFD4EB"), name = "sex")+
-  scale_fill_manual(values = c("#D5968F","#CFD4EB"), name = "sex")+
+  scale_color_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
+  scale_fill_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
   theme(legend.position = "none")+
   ylab("Critical thermal maximum in °C")+
   xlab("Prosome length in µm")
@@ -251,8 +251,8 @@ cold_warm <- ggplot(data_cw, aes(y = Ctmax, x = length, col = sex_confirmed))+
 legend4 <- get_legend(ggplot(assays, aes(y = Ctmax, x = length, col = sex_confirmed))+
                         geom_point(aes(shape = generation), size = 2.75)+
                         geom_smooth(method = "lm", aes(group = sex_confirmed, col = sex_confirmed, fill = sex_confirmed))+
-                        scale_color_manual(values = c("#D5968F","#CFD4EB"), name = "sex")+
-                        scale_fill_manual(values = c("#D5968F","#CFD4EB"), name = "sex")+
+                        scale_color_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
+                        scale_fill_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
                         theme_light()+
                         theme(legend.position = "bottom"))
 
