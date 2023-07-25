@@ -6,3 +6,5 @@ Contains the code used to generate graphs and statistics for "Phenotypic Plastic
 `Plasticity_Acartia_stats.R` is used to produce the main statistics and statistic for individual plots, it requires `data.csv`
 
 `Plasticity_Acartia_supplemental_figures.R` is used to produce the supplemental figures and some corresponding stats, it requires `data.csv` and `temp_running.csv`
+
+The directory `genotyping` contains all files necessary to generate a phylogenetic tree of experimental animals
