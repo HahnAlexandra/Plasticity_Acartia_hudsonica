@@ -257,12 +257,12 @@ Ctmax_all +
   geom_text(data = all2, aes(y = yloc, label = label),
             position = position_dodge(width = .75))
 
-#### Figure S.6 & S.7 ####
-#https://github.com/rsbrennan/mitotype_pipeline
-#pipeline above was used to create the plots
+#### Figure S.6  ####
+#https://github.com/HahnAlexandra/Plasticity_Acartia_hudsonica/tree/main/genotyping
+#find pipeline to create plot in directory above
 
-#### Figure S.8 - species identity####
-S8_A <- ggplot(all, aes(x = Ctmax, y = length, col = species_gen))+
+#### Figure S.7 - species identity####
+S7_A <- ggplot(all, aes(x = Ctmax, y = length, col = species_gen))+
   geom_point(aes(shape = generation), size = 2.75)+
   scale_color_manual(values = c("#333333","#CFD4EB", "#96B48E","#D5968F"), name = "species")+
   theme_light(base_size = 14)+
@@ -270,7 +270,7 @@ S8_A <- ggplot(all, aes(x = Ctmax, y = length, col = species_gen))+
   ylab("Prosome length in µm")+
   theme(legend.position = "none")
 
-S8_B <- ggplot(all, aes(x = Ctmax, y = length, col = species))+
+S7_B <- ggplot(all, aes(x = Ctmax, y = length, col = species))+
   geom_point(aes(shape = generation), size = 2.75)+
   scale_color_manual(values = c("#CFD4EB","#D5968F"), name = "species")+
   theme_light(base_size = 14)+
@@ -278,23 +278,23 @@ S8_B <- ggplot(all, aes(x = Ctmax, y = length, col = species))+
   ylab("Prosome length in µm")+
   theme(legend.position = "none")
 
-legendS8 <- get_legend(ggplot(all, aes(x = Ctmax, y = length, col = species_gen))+
+legendS7 <- get_legend(ggplot(all, aes(x = Ctmax, y = length, col = species_gen))+
   geom_point(aes(shape = generation), size = 2.75)+
   scale_color_manual(values = c("#333333","#CFD4EB", "#96B48E","#D5968F"), name = "species")+
   theme_light(base_size = 14))
 
 dev.new()
-combined_S8 <- plot_grid(S8_A, S8_B,  ncol = 1, labels = c("A", "B"))
-plot_grid(combined_S8, legendS8, rel_widths = c(3/4, 1/4) )
+combined_S7 <- plot_grid(S7_A, S7_B,  ncol = 1, labels = c("A", "B"))
+plot_grid(combined_S7, legendS7, rel_widths = c(3/4, 1/4) )
 
-#### Figure S.9 - CTD data####
+#### Figure S.8 - CTD data####
 p_exp <- read.csv("~/Documents/Scripts/Thesis/CTD2.csv", sep = ";")
 p_exp$Date <- paste(p_exp$Year, p_exp$Month, p_exp$Day, sep = "-")
 
 p_exp$Date <- as.Date(p_exp$Date) 
 
 #temperature
-S9_A <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = Temp..degC))+
+S8_A <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = Temp..degC))+
   geom_point()+
   scale_y_reverse()+
   scale_color_gradientn(colors = wes_palette("Zissou1", type = "continuous"))+
@@ -304,7 +304,7 @@ S9_A <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = Temp..degC))+
 
 ##salinity
 
-S9_B <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = SALIN..ppt))+
+S8_B <- ggplot(p_exp, aes(x = Date, y = Pressure..db, color = SALIN..ppt))+
   geom_point()+
   scale_y_reverse()+
   scale_color_gradientn(colors = wes_palette("Zissou1", type = "continuous"))+
