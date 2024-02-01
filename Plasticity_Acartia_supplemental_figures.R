@@ -467,7 +467,7 @@ plot_grid(combined_S11, legendS11, nrow = 2 , rel_heights  = c(9/10, 1/10))
 
 cor.test(wild2$length, wild2$Ctmax, method = "pearson")
 #### Figure S.12 - CTD data####
-p_exp <- read.csv("CTD2.csv", sep = ";")
+p_exp <- read.csv("CTD_data.csv", sep = ";")
 p_exp$Date <- paste(p_exp$Year, p_exp$Month, p_exp$Day, sep = "-")
 
 p_exp$Date <- as.Date(p_exp$Date) 
