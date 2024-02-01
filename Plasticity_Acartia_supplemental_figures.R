@@ -16,7 +16,7 @@ library(gridExtra)
 #setwd("~/your path") set path to download folder
 
 #import full data set
-assays <- read.csv("~/Documents/Scripts/Thesis/data.csv", sep=";", header = TRUE)
+assays <- read.csv("data.csv", sep=";", header = TRUE)
 assays <- assays[-c(1, 59, 136, 246), ]#remove dead or inactive
 assays <-  assays[!(is.na(assays$collection)),]#remove potential NA values created when importing
 
@@ -467,7 +467,7 @@ plot_grid(combined_S11, legendS11, nrow = 2 , rel_heights  = c(9/10, 1/10))
 
 cor.test(wild2$length, wild2$Ctmax, method = "pearson")
 #### Figure S.12 - CTD data####
-p_exp <- read.csv("CTD_data.csv", sep = ";")
+p_exp <- read.csv("CTD2.csv", sep = ";")
 p_exp$Date <- paste(p_exp$Year, p_exp$Month, p_exp$Day, sep = "-")
 
 p_exp$Date <- as.Date(p_exp$Date) 
