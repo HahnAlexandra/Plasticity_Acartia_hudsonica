@@ -1,20 +1,22 @@
 ##########################################################
-##                       CTmax                          ##
+##                    Main Figures                      ##
 ##                   Alexandra Hahn                     ##
 ##########################################################
 
-setwd("~/Documents/Scripts/Thesis")
+#this script produces the main figures from 
+#"Phenotypic Plasticity Drives Seasonal Thermal Tolerance in a Baltic Copepod"
 
 #load necessary packages
 library(tidyverse)
 library(wesanderson)
 library(cowplot)
 library(ggplotFL)
-library(Hmisc)
-library(Rmisc)
+library(emmeans)
+
+#setwd("~/your path") set path to download folder
 
 #import full data set
-assays <- read.csv("~/Documents/Scripts/Thesis/data.csv", sep=";", header = TRUE)
+assays <- read.csv("data.csv", sep=";", header = TRUE)
 assays <- assays[-c(1, 59, 136, 246), ]#remove dead or inactive
 assays <-  assays[!(is.na(assays$collection)),]#remove potential NA values created when importing
 
@@ -48,11 +50,17 @@ assays <-  assays[!(is.na(assays$collection)),]#remove potential NA values creat
   wild <- assays[which(assays$treatment == "wild"),]
   wild2 <- wild[which(wild$species != "tonsa"),]
   
+  f1 <- hudsonica[which(hudsonica$generation == "f1"),]
+  
 } 
 
-####Figure 1 - SST trend and boxplots just for wild collections####
-#wild for hudsonica and tonsa, wild2 for just hudsonica
-#CTmax
+####Figure 1 - Conceptual Figure #####
+# no code for this figure
+
+####Figure 2 - SST trend and boxplots just for wild individuals####
+#subset wild2 only includes Acartia hudsonica
+
+# boxplot for CTmax
 box <- ggplot(wild2, aes(x = mean2, y = Ctmax, fill = X2.week_mean))+
   geom_boxplot(outlier.shape = NA)+
   geom_point(position = position_jitterdodge(jitter.width = 0.2), aes(col = X2.week_mean, alpha = 0.2))+
@@ -63,7 +71,7 @@ box <- ggplot(wild2, aes(x = mean2, y = Ctmax, fill = X2.week_mean))+
   xlab("")+ ylab(expression("CT"["max"]* " in °C"))+
   theme(legend.position = "none")
 
-#length
+#box plot for length
 box2 <- ggplot(wild2, aes(x = mean2, y = length, fill = X2.week_mean))+
   geom_boxplot(outlier.shape = NA)+
   geom_point(position = position_jitterdodge(jitter.width = 0.2), aes(col = X2.week_mean, alpha = 0.2))+
@@ -76,7 +84,7 @@ box2 <- ggplot(wild2, aes(x = mean2, y = length, fill = X2.week_mean))+
 
 #SST trend
 #load temperature data
-SST <- read.csv("~/Documents/Scripts/Thesis/temperature.csv", sep = ",")
+SST <- read.csv("temperature.csv", sep = ",")
 SST$Date <- as.Date(SST$Date)#transfor to date format
 
 
@@ -108,13 +116,11 @@ SST_sampling <- SST_plot + geom_rect(data = rects, inherit.aes=FALSE, mapping=ae
   geom_vline(aes(xintercept = as.numeric(as.Date("2022-07-19"))), col = "black", linetype = 3, size = 1)+
   geom_vline(aes(xintercept = as.numeric(as.Date("2022-06-13"))), col = "darkgrey", linetype = 3, size = 1)
 
-SST_sampling
-
 #plot togehter with boxplots in new window
 dev.new()
 plot_grid(SST_sampling, box, box2, ncol = 3, labels = c("A", "B", "C"))
 
-####Figure 2 - Boxplots for CTmax####
+####Figure 3 - Boxplots for CTmax and length####
 #boxplots Ctmax
 hud2 <- distinct(hudsonica, date_sampling, treatment)%>%
   arrange(date_sampling, treatment)
@@ -125,7 +131,7 @@ Ctmax_out <- ggplot(hudsonica, aes(x=date_sampling, y=Ctmax, fill=treatment))+
   geom_boxplot(outlier.shape = NA)+
   geom_point(position = position_jitterdodge(jitter.width = 0.2), alpha = 0.2)+
   theme_light(base_size = 11)+
-  scale_x_discrete(labels=c("2022-04-06" = "April 22", "2022-05-16" = " May 22", "2022-06-27" = " June 22" , "2022-07-19" = "July 22"))+
+  scale_x_discrete(labels=c("2022-04-06" = "Col 1", "2022-05-16" = " Col 2", "2022-06-27" = "Col 4" , "2022-07-19" = "Col 5"))+
   scale_y_continuous(limits = c(23,31), n.breaks = 5)+
   xlab("")+ ylab("Critical thermal maximum in °C")+
   theme(legend.position = "none")+
@@ -143,7 +149,7 @@ Length_out <- ggplot(hudsonica, aes(x=date_sampling, y=length, fill=treatment))+
   geom_boxplot(outlier.shape = NA)+
   geom_point(position = position_jitterdodge(jitter.width = 0.2), alpha = 0.2)+
   theme_light(base_size = 11)+
-  scale_x_discrete(labels=c("2022-04-06" = "April 22", "2022-05-16" = " May 22", "2022-06-27" = " June 22" , "2022-07-19" = "July 22"))+
+  scale_x_discrete(labels=c("2022-04-06" = "Col 1", "2022-05-16" = "Col 2", "2022-06-27" = "Col 4" , "2022-07-19" = "Col 5"))+
   xlab("Sampling time")+ ylab("Prosome length in µm")+
   theme(legend.position = "none")+
   scale_fill_manual(values = c("#96B48E","#CFD4EB","#D5968F"), name = "Treatment")
@@ -160,7 +166,7 @@ L_out <- Length_out +
             position = position_dodge(width = .75))
 
 #extract legend
-legend2 <- get_legend(ggplot(hudsonica, aes(x=date_sampling, y=length, fill=treatment))+
+legend3 <- get_legend(ggplot(hudsonica, aes(x=date_sampling, y=length, fill=treatment))+
                         geom_boxplot(outlier.shape = NA)+
                         scale_fill_manual(values = c("#96B48E","#CFD4EB","#D5968F"), name = "Treatment")+
                         theme_light())
@@ -170,93 +176,73 @@ plotCL <- plot_grid(C_out,  L_out, ncol = 1, labels = c("A", "B"))
 
 #plot to new window
 dev.new()
-plot_grid(plotCL, legend2, rel_widths = c(5/6, 1/6))
+plot_grid(plotCL, legend3, rel_widths = c(5/6, 1/6))
 
 
-#### Figure 3 - reaction norms####
-rnorm <- assays[which(assays$treatment != "wild" & assays$species != "tonsa"),]
+#### Figure 4 - reaction norms####
 
-#reaction norm for length
-rn_length <- ggplot(rnorm, aes(y = length, x = treatment, col = collection))+
-  stat_summary_bin(fun=mean, geom="line", aes(group = collection), linewidth = 0.75)  + 
+#build table from model means, see Plasticity_Acartia_stats
+m_lf1 <- lm(length~treatment * collection + sex_confirmed, data = f1)
+means_length <- emmeans(m_lf1, ~ treatment * collection)
+summary_means_length <- summary(means_length)
+summary_means_length <-  summary_means_length[!(is.na(summary_means_length$emmean)),]
+
+#build reaction norm for length with raw data from subset f1 and model means
+rn_length <- ggplot(f1, aes(y = length, x = treatment, col = collection))+
+  geom_point(data = summary_means_length, 
+             aes(y = emmean, x = treatment, col = collection),
+             position = position_dodge(0.1), size = 3)+
+  geom_errorbar(data = summary_means_length,
+                aes(y = emmean, ymin = (emmean - SE), ymax = (emmean + SE), x = treatment, col = collection),
+                position = position_dodge(0.1), width = 0.2) +
+  geom_line(data = summary_means_length,
+            aes(y = emmean, x = treatment, col = collection, group = collection),
+            position = position_dodge(0.1),
+            linetype = "solid") +
   scale_color_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
-  stat_summary(fun=mean, geom="point", size = 2.75)+
-  stat_summary(fun.data = mean_cl_normal, geom="errorbar", width=0.05, size=0.75)+
   theme_light(base_size = 14)+
+  theme(strip.background =element_rect(fill="white"))+
+  theme(strip.text = element_text(colour = 'black', size = 10))+
   geom_point(alpha = 0.2, position = position_dodge(0.1))+
   scale_x_discrete(expand = c(0.1,0))+
-  ylab("Prosome length in µm") + xlab("Treatment")+
-  theme(legend.position = "none")
-
+  ylab("Critical thermal maximum in °C") + xlab("Treatment")+
+  theme(legend.position = "none") 
 
 #reaction norm for Ctmax
-rn_ctmax <- ggplot(rnorm, aes(y = Ctmax, x = treatment, col = collection))+
-  stat_summary_bin(fun=mean, geom="line", aes(group = collection), linewidth = 0.75)  + 
+#build table from model means, see Plasticity_Acartia_stats
+m_f1 <- lm(Ctmax~treatment * collection + sex_confirmed + length, data = f1)
+means_Ctmax <- emmeans(m_f1, ~ treatment * collection)
+summary_means_Ctmax <- summary(means_Ctmax)
+summary_means_Ctmax <-  summary_means_Ctmax[!(is.na(summary_means_Ctmax$emmean)),]
+
+#build reaction norm for Ctmax with raw data from subset f1 and model means
+rn_ctmax <- ggplot(f1, aes(y = Ctmax, x = treatment, col = collection))+
+  geom_point(data = summary_means_Ctmax, 
+             aes(y = emmean, x = treatment, col = collection),
+             position = position_dodge(0.1), size = 3)+
+  geom_errorbar(data = summary_means_Ctmax,
+                aes(y = emmean, ymin = (emmean - SE), ymax = (emmean + SE), x = treatment, col = collection),
+                position = position_dodge(0.1), width = 0.2) +
+  geom_line(data = summary_means_Ctmax,
+            aes(y = emmean, x = treatment, col = collection, group = collection),
+            position = position_dodge(0.1),
+            linetype = "solid") +
   scale_color_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
-  stat_summary(fun=mean, geom="point", size = 2.75)+
-  stat_summary(fun.data = mean_cl_normal, geom="errorbar", width=0.05, size=0.75)+
   theme_light(base_size = 14)+
+  theme(strip.background =element_rect(fill="white"))+
+  theme(strip.text = element_text(colour = 'black', size = 10))+
   geom_point(alpha = 0.2, position = position_dodge(0.1))+
   scale_x_discrete(expand = c(0.1,0))+
   ylab("Critical thermal maximum in °C") + xlab("Treatment")+
   theme(legend.position = "none") 
 
 #extract legend 
-legend3 <- get_legend(ggplot(rnorm, aes(y = Ctmax, x = treatment, col = collection))+
+legend4 <- get_legend(ggplot(f1, aes(y = Ctmax, x = treatment, col = collection))+
                        scale_color_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
-                       geom_point()+
+                       geom_point(size = 3)+
                        theme_light())
 
 #combine two plots in new window 
 dev.new()
-plot_grid(nrow = 1, rn_ctmax, rn_length, legend3, rel_widths = c(3/7, 3/7, 1/7), labels = c("A", "B", ""))
-
-
-####Figure 4 - Correlation CTmax and prosome length####  
-
-#data set with wild individuals removed, excluding outliers in cold col-2
-data_cw <- hudsonica %>%
-  dplyr::filter(treatment != "wild")%>%
-  dplyr::filter(collection != "2" | treatment != "cold")
-  
-
-wild <- ggplot(wild2, aes(y = Ctmax, x = length, col = sex_confirmed))+
-  geom_point(size = 2.75, alpha = 0.5)+
-  geom_smooth(method = "lm", aes(group = sex_confirmed, col = sex_confirmed, fill = sex_confirmed))+
-  scale_color_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
-  scale_fill_manual(values = c("#D5968F","#CFD4EB"), name = "sex")+
-  facet_wrap(~treatment)+
-  theme_light(base_size = 10)+
-  theme(strip.background =element_rect(fill="white"))+
-  theme(strip.text = element_text(colour = 'black', size = 10))+
-  theme(legend.position = "none")+
-  xlab("Prosome length in µm")+
-  ylab("Critical thermal maximum in °C")
-
-
-cold_warm <- ggplot(data_cw, aes(y = Ctmax, x = length, col = sex_confirmed))+
-  geom_point(shape = 17, size = 2.75, alpha = 0.4)+
-  facet_wrap(~treatment)+
-  theme_light(base_size = 10)+
-  theme(strip.background =element_rect(fill="white"))+
-  theme(strip.text = element_text(colour = 'black', size = 10))+
-  geom_smooth(method = "lm", aes(group = sex_confirmed, col = sex_confirmed, fill = sex_confirmed))+
-  scale_color_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
-  scale_fill_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
-  theme(legend.position = "none")+
-  ylab("Critical thermal maximum in °C")+
-  xlab("Prosome length in µm")
-
-
-legend4 <- get_legend(ggplot(assays, aes(y = Ctmax, x = length, col = sex_confirmed))+
-                        geom_point(aes(shape = generation), size = 2.75)+
-                        geom_smooth(method = "lm", aes(group = sex_confirmed, col = sex_confirmed, fill = sex_confirmed))+
-                        scale_color_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
-                        scale_fill_manual(values = c("#D5968F","#96B3FF"), name = "sex")+
-                        theme_light()+
-                        theme(legend.position = "bottom"))
-
-dev.new()
-plotsF4 <- plot_grid(wild, cold_warm, nrow = 2, labels = c("A", "B", "C"))
-plot_grid(plotsF4, legend4, nrow = 2 , rel_heights  = c(9/10, 1/10))
+plot_grid(nrow = 1, rn_ctmax, rn_length, legend4, rel_widths = c(3/7, 3/7, 1/7), labels = c("A", "B", ""))
 
