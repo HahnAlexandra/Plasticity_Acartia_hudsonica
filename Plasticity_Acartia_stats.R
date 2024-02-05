@@ -3,8 +3,10 @@
 ##                   Alexandra Hahn                     ##
 ##########################################################
 
+#this script produces the statistical analysis for
+#"Phenotypic Plasticity Drives Seasonal Thermal Tolerance in a Baltic Copepod"
 
-setwd("~/Documents/Scripts/Thesis")
+#setwd("~/your_path")
 
 library(tidyverse)
 library(olsrr)
@@ -17,7 +19,7 @@ library(sjPlot)
 library(gridExtra)
 
 #import full data set
-assays <- read.csv("~/Documents/Scripts/Thesis/data.csv", sep=";", header = TRUE)
+assays <- read.csv("data.csv", sep=";", header = TRUE)
 assays <- assays[-c(1, 59, 136, 246), ]#remove dead or inactive
 assays <-  assays[!(is.na(assays$collection)),]#remove potential NA values created when importing
 
@@ -49,15 +51,18 @@ assays <-  assays[!(is.na(assays$collection)),]#remove potential NA values creat
     filter(species == "hudsonica")%>%
     filter(collection != 3)
   
+  hudsonica.2 <- hudsonica[which(hudsonica$collection != 2 | hudsonica$treatment != "cold"),]
+  
   wild <- assays[which(assays$treatment == "wild"),]
   wild2 <- wild[which(wild$species != "tonsa"),]
-  
+  f1 <- hudsonica[which(hudsonica$generation == "f1"),]
+  f1.2 <- f1[which(f1$collection != 2 | f1$treatment != "cold"),]
 } 
 
 
-####holistic models####
+####CTmax models####
 
-#full model with random effects
+#full CTmax model with random effects
 m0 <- lmer(Ctmax~treatment*collection* sex_confirmed*length + (1|vial_number)+ (1|time_assay) + (1|tank_side),
            data = hudsonica)
 summary(m0)
@@ -69,10 +74,22 @@ grid.arrange(p[[1]], p[[2]], p[[3]])# no visible strong effects....
 
 #random effects do not improve model fit --> drop random effects
 
-#final model after model testing and comparing biological relevance
+#full CTmax model without random effects
+m0_1 <- lm(Ctmax~treatment*collection*sex_confirmed*length, data = hudsonica)
+summary(m0_1)
+Anova(m0_1, singular.ok = T, type = 3)
+
+#biological CTmax model after model testing and comparing biological relevance
 m <- lm(Ctmax~collection*treatment + sex_confirmed + length, data = hudsonica)
 summary(m)
-Anova(m, singular.ok = T, type = 3)#length not significant
+Anova(m, singular.ok = T, type = 3)
+
+#model comparison
+AIC(m, m0, m0_1)
+BIC(m, m0, m0_1)
+#biological model is chosen, lowest AIC and BIC
+
+#diagnostics for biological Ctmax model (m)
 
 hist(resid(m))#normal distribution
 ols_test_normality(m)#Kolmogorov-Smirnov for observation > 50, not sig = normal distribution
@@ -84,26 +101,182 @@ par(mfrow = c(1,1))
 
 durbinWatsonTest(m)#no autocorrelation if p > 0.05
 
-m_l <- lm(length~collection*treatment + sex_confirmed, data = hudsonica)
-summary(m_l)
-Anova(m_l, singular.ok = T, type = 3)
+#post-hoc pairwise comparison CTmax
+m_emmeans <- emmeans(m, pairwise ~ collection:treatment)
+summary(m_emmeans$emmeans)
+summary(m_emmeans$contrasts)
 
-hist(resid(m_l))#normal distribution
-
-par(mfrow = c(2,2))
-plot(m_l)
-par(mfrow = c(1,1))
-
-#effects of developmental temperature
-m1 <- lm(Ctmax ~ X2.week_mean + sex_confirmed, data = hudsonica)
-summary(m1)
-Anova(m1, singular.ok = T, type = 3)
-
-m2 <- lm(length ~ X2.week_mean + sex_confirmed, data = hudsonica)
-summary(m2)
+#model substituting collection with collection temperature
+m2 <- lm(Ctmax~treatment*tempf1_parental + sex_confirmed + length, data = hudsonica)
+summary(m2)#with treatment and mean temperature same information is conveyed for common garden
 Anova(m2, singular.ok = T, type = 3)
 
-####Figure 1####
+hist(resid(m2))
+
+par(mfrow = c(2,2))
+plot(m2)
+par(mfrow = c(1,1))
+
+AIC(m, m2)#m has lower AIC
+#statistical output very similar for both models
+
+#Ctmax models excluding cold col-2
+m.2 <- lm(Ctmax~collection*treatment + sex_confirmed + length, data = hudsonica.2)
+summary(m.2)
+Anova(m.2, singular.ok = T, type = 3)
+
+hist(resid(m.2))
+
+par(mfrow = c(2,2))
+plot(m.2)
+par(mfrow = c(1,1))
+
+m2.2 <- lm(Ctmax~treatment*tempf1_parental + sex_confirmed + length, data = hudsonica.2)
+summary(m2.2)#with treatment and mean collection temperature same information is conveyed 
+Anova(m2.2, singular.ok = T, type = 3)
+
+hist(resid(m2.2))
+
+par(mfrow = c(2,2))
+plot(m2.2)
+par(mfrow = c(1,1))
+
+
+####Length models####
+
+#full CTmax model with random effects
+ml0 <- lmer(length~treatment*collection* sex_confirmed + (1|vial_number)+ (1|time_assay) + (1|tank_side),
+           data = hudsonica)
+summary(ml0)
+Anova(ml0, type = 3)
+
+# this visualizes the "random effects"
+p <- plot_model(ml0, type = "re", facet.grid=FALSE) 
+grid.arrange(p[[1]], p[[2]], p[[3]])# no visible strong effects....
+
+#random effects do not improve model fit --> drop random effects
+
+#full length model without random effects
+ml0_1 <- lm(length~treatment*collection*sex_confirmed, data = hudsonica)
+summary(ml0_1)
+Anova(ml0_1, singular.ok = T, type = 3)
+
+#biological CTmax model after model testing and comparing biological relevance
+ml <- lm(length~collection*treatment + sex_confirmed, data = hudsonica)
+summary(ml)
+Anova(ml, singular.ok = T, type = 3)
+
+#model comparison
+AIC(ml, ml0, ml0_1)
+BIC(ml, ml0, ml0_1)
+#biological model is chosen, lowest BIC, full model has lower AIC but tradeoff with df
+
+#diagnostics for biological Ctmax model (m)
+
+hist(resid(ml))#normal distribution
+ols_test_normality(ml)#Kolmogorov-Smirnov for observation > 50, not sig = normal distribution
+ols_test_correlation(ml)#correlation between observed and expected residuals (under normality)
+
+par(mfrow = c(2,2))
+plot(m)
+par(mfrow = c(1,1))
+
+durbinWatsonTest(ml)#no autocorrelation if p > 0.05
+
+#post-hoc pairwise comparison CTmax
+ml_emmeans <- emmeans(ml, pairwise ~ collection:treatment)
+summary(ml_emmeans$emmeans)
+summary(ml_emmeans$contrasts)
+
+#model substituting collection with collection temperature
+ml2 <- lm(length~treatment*tempf1_parental + sex_confirmed, data = hudsonica)
+summary(ml2)#with treatment and mean temperature same information is conveyed for common garden
+Anova(ml2, singular.ok = T, type = 3)
+
+hist(resid(ml2))
+
+par(mfrow = c(2,2))
+plot(ml2)
+par(mfrow = c(1,1))
+
+AIC(m, m2)#m has lower AIC
+#statistical output very similar for both models
+
+#Ctmax models excluding cold col-2
+ml.2 <- lm(length~collection*treatment + sex_confirmed, data = hudsonica.2)
+summary(ml.2)
+Anova(ml.2, singular.ok = T, type = 3)
+
+hist(resid(ml.2))
+
+par(mfrow = c(2,2))
+plot(ml.2)
+par(mfrow = c(1,1))
+
+ml2.2 <- lm(length~treatment*tempf1_parental + sex_confirmed + length, data = hudsonica.2)
+summary(ml2.2)#with treatment and mean collection temperature same information is conveyed 
+Anova(ml2.2, singular.ok = T, type = 3)
+
+hist(resid(ml2.2))
+
+par(mfrow = c(2,2))
+plot(ml2.2)
+par(mfrow = c(1,1))
+
+#####F1 models#####
+
+#models for Ctmax F1
+m_f1 <- lm(Ctmax~treatment * tempf1_parental + sex_confirmed + length, data = f1)
+summary(m_f1)#1.5 degree between cold and warm
+Anova(m_f1, singular.ok = T, type = 3)#parental effect driven by cold col-2
+
+hist(resid(m_f1))
+par(mfrow = c(2,2))
+plot(m_f1)
+par(mfrow = c(1,1))
+
+#build table for reaction norm usind model means
+means_Ctmax <- emmeans(m_f1, ~ treatment * collection)
+summary_means_Ctmax <- summary(means_Ctmax)
+summary_means_Ctmax <-  summary_means_length[!(is.na(summary_means_length$emmean)),]
+
+#remove cold col-2
+m_f1.2 <- lm(Ctmax~treatment * tempf1_parental + sex_confirmed + length, data = f1.2)
+summary(m_f1.2)#0.7 degree between cold and warm
+Anova(m_f1.2, singular.ok = T, type = 3)# no parental effect
+
+hist(resid(m_f1.2))#removal greatly improves distribution of residuals
+par(mfrow = c(2,2))
+plot(m_f1.2)
+par(mfrow = c(1,1))
+
+#models for length F1
+m_lf1 <- lm(length~treatment * tempf1_parental + sex_confirmed, data = f1)
+summary(m_lf1)#-57 microM between cold-warm
+Anova(m_lf1, singular.ok = T, type = 3)#parental effect
+
+hist(resid(m_lf1))
+par(mfrow = c(2,2))
+plot(m_lf1)
+par(mfrow = c(1,1))
+
+#build table for reaction norm usind model means
+means_length <- emmeans(m_lf1, ~ treatment * collection)
+summary_means_length <- summary(means_length)
+summary_means_length <-  summary_means_length[!(is.na(summary_means_length$emmean)),]
+
+#remove cold col-2
+m_lf1.2 <- lm(length~treatment * tempf1_parental + sex_confirmed, data = f1.2)
+summary(m_lf1.2)#-73 microM between cold-warm
+Anova(m_lf1.2, singular.ok = T, type = 3)# still parental effect
+
+hist(resid(m_lf1.2))# removal greatly improves distribution of residuals
+par(mfrow = c(2,2))
+plot(m_lf1.2)
+par(mfrow = c(1,1))
+
+
+####Figure 2 - compact letters####
 #models for Ctmax and length
 mF1 <- lm(Ctmax ~ collection, data = wild2)
 summary(mF1); Anova(mF1, type = 3)
@@ -113,7 +286,7 @@ summary(mF1b); Anova(mF1b, type = 3)
 
 #model means and compact letters, post-hoc test
 #Ctmax
-cor.test(wild2$X2.week_mean, wild2$Ctmax, method = "spearman")#spearman correlation 0.758
+cor.test(wild2$X2.week_mean, wild2$Ctmax, method = "pearson")#spearman correlation 0.766
 
 wild2 %>% 
   group_by(collection) %>% 
@@ -132,7 +305,7 @@ mmF1_cld <- cld(object = mmF1,
 mmF1_cld
 
 #length
-cor.test(wild2$X2.week_mean, wild2$length, method = "spearman")#spearman correlation -0.572
+cor.test(wild2$X2.week_mean, wild2$length, method = "pearson")#spearman correlation -0.529
 
 wild2 %>% 
   filter(is.na(wild2$length) == FALSE) %>%
@@ -152,7 +325,7 @@ mmF1b_cld <- cld(object = mmF1b,
 mmF1b_cld
 
 
-####Figure 2####
+####Figure 3 - compact letters####
 #for Ctmax
 hudsonica %>% 
   group_by(collection:treatment) %>% 
@@ -235,118 +408,8 @@ ph_F2b <- contrast(mmF2b, method = "tukey")#pairwise comparison
 pval_F2b <- summary(ph_F2b)$p.value#summary of p-values
 
 
-#### Figure 3####
-rnorm <- assays[which(assays$treatment != "wild" & assays$species != "tonsa"),]
-
-#slopes for Ctmax
-models <- lapply(unique(rnorm_stat$collection), function(col) {
-  lm(Ctmax ~ treatment, data = subset(rnorm_stat, collection == col))
-})#fit lin regression models
-
-slopes <- sapply(models, function(model) {
-  coef(model)[2]
-})#extract slopes
-
-slopes# col-1 0.9723269, col-2 2.4471053, col-4 0.9976983
-
-#slopes for length
-models2 <- lapply(unique(rnorm_stat$collection), function(col) {
-  lm(length ~ treatment, data = subset(rnorm_stat, collection == col))
-})
-
-# Extract slopes
-slopes2 <- sapply(models2, function(model) {
-  coef(model)[2]
-})
-
-slopes2# col-1 -82.07544, col-2 -40.3333, col-4 -70.17644
-
-#stats for reaction norms Ctmax
-m_rnorm_c <- lm(Ctmax ~ treatment*collection, rnorm)
-summary(m_rnorm_c)
-Anova(m_rnorm_c, type = 3, singular.ok = TRUE)
-
-hist(resid(m_rnorm_c))
-ols_test_normality(m_rnorm_c)#Kolmogorov-Smirnov for observations larger than 50, if p-value is > 0.05 --> residuals normally distributed
-ols_test_correlation(m_rnorm_c)#correlation between observed and expected residuals (under normality)
-
-#post-hoc for Ctmax
-pairs(emmeans(m_rnorm_c, ~treatment|collection))#all cold-warm sig different
-pairs(emmeans(m_rnorm_c, ~collection|treatment))#col 2 sig different at cold
 
 
-#stats for reaction norms length
-m_rnorm_l <- lm(length ~ treatment*collection, rnorm)
-summary(m_rnorm_l)
-Anova(m_rnorm_l, type = 3, singular.ok = TRUE)
 
-hist(resid(m_rnorm_l))
-ols_test_normality(m_rnorm_l)
-ols_test_correlation(m_rnorm_l)
 
-#post-hoc for length
-pairs(emmeans(m_rnorm_l, ~treatment|collection))#all cold-warm sif different
-pairs(emmeans(m_rnorm_l, ~collection|treatment))
 
-#drop col 2 then model for Ctmax
-m_rnorm_c2 <- rnorm %>%
-  filter(collection != "2")%>%
-  lm(Ctmax ~ treatment*collection, .)
-
-Anova(m_rnorm_c2, type = 3, singular.ok = TRUE)# no interaction
-pairs(emmeans(m_rnorm_c2, ~collection|treatment))# marginally significant
-
-#drop col 2 then model for length
-m_rnorm_l2 <- rnorm %>%
-  filter(collection != "2")%>%
-  lm(length ~ treatment*collection, .)
-
-Anova(m_rnorm_l2, type = 3, singular.ok = TRUE)#no interaction
-pairs(emmeans(m_rnorm_l2, ~collection|treatment))#significantly different
-
-#### Figure 4 ####
-data_cw <- hudsonica %>%
-  dplyr::filter(treatment != "wild")%>%
-  dplyr::filter(collection != "2" | treatment != "cold")
-
-data_c <- data_cw %>%
-  dplyr::filter(treatment == "cold")#cold F1 excluding col 2
-
-data_w <- data_cw %>%
-  dplyr::filter(treatment == "warm")#warm F1
-
-#model and correlations for wild
-mF4_wi <- lm(Ctmax~length + sex_confirmed, data = wild2)
-summary(mF4_wi)
-Anova(mF4_wi, type = 3)
-hist(resid(mF4_wi))
-
-cor.test(wild2$Ctmax, wild2$length, method = "spearman")
-cor.test(wild2$Ctmax, wild2$length)
-
-#model and correlations for warm and cold
-mF4 <- lm(Ctmax~length + sex_confirmed, data = data_cw)
-summary(mF4)
-Anova(mF4, type = 3)
-hist(resid(mF4))
-
-cor.test(data_cw$Ctmax, data_cw$length, method = "spearman")
-cor.test(data_cw$Ctmax, data_cw$length)
-
-#model and correlations for cold
-mF4_c <- lm(Ctmax~length + sex_confirmed, data = data_c)
-summary(mF4_c)
-Anova(mF4_c, type = 3)
-hist(resid(mF4_c))
-
-cor.test(data_c$Ctmax, data_c$length, method = "spearman")#spearman's p 
-cor.test(data_c$Ctmax, data_c$length)
-
-#model and correlations for warm
-mF4_wa <- lm(Ctmax~length + sex_confirmed, data = data_w)
-summary(mF4_wa)
-Anova(mF4_wa, type = 3)
-hist(resid(mF4_wa))
-
-cor.test(data_w$Ctmax, data_w$length, method = "spearman")#spearman's p 
-cor.test(data_w$Ctmax, data_w$length)
