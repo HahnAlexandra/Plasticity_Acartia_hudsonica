@@ -413,3 +413,90 @@ pval_F2b <- summary(ph_F2b)$p.value#summary of p-values
 
 
 
+
+#### means and standard deviations ####
+
+##CTmax
+
+#mean Ctmax for wild animals
+mean_sd_wild <- wild2 %>%
+  group_by(collection)%>%
+  summarise(mean = mean(Ctmax),
+            sd = sd(Ctmax))
+
+#mean Ctmax and sdper sex
+mean_sd_sex <- hudsonica %>% 
+  group_by(sex_confirmed)%>%
+  summarise(mean_sex = mean(Ctmax),
+            sd_sex = sd(Ctmax))
+
+#mean Ctmax and sd per treatment
+mean_sd_Ctmax <- hudsonica %>% 
+  group_by(treatment)%>%
+  summarise(mean_Ctmax = mean(Ctmax),
+            sd_Ctmax = sd(Ctmax))
+#without cold col-2
+mean_Ctmax.2 <- hudsonica.2 %>% 
+  group_by(treatment)%>%
+  summarise(mean_Ctmax.2 = mean(Ctmax),
+            sd_Ctmax.2 = sd(Ctmax))
+
+##length
+
+#mean legth and sd per sex
+sex_length <- hudsonica %>%
+  group_by(sex_confirmed)%>%
+  summarise(sex_length = mean(length, na.rm = TRUE),
+            sex_sd = sd(length, na.rm = TRUE))
+
+#mean length per treatment and collection
+mean_sd_length <- hudsonica %>%
+  group_by(treatment, collection)%>%
+  summarise(mean_length = mean(length, na.rm = TRUE),
+            sd_length = sd(length, na.rm = TRUE))
+
+#SST
+SST <- read.csv("temperature.csv", sep = ",")#load data
+SST$Date <- as.Date(SST$Date)#transform to date format
+
+#daily average
+ mean(SST$T..IPTS.90[which(SST$Date == "2022-04-06")] )#5.81
+sd(SST$T..IPTS.90[which(SST$Date == "2022-04-06")] )#0.05
+mean(SST$T..IPTS.90[which(SST$Date == "2022-05-16")] )#12.66
+sd(SST$T..IPTS.90[which(SST$Date == "2022-05-16")])#0.53
+mean(SST$T..IPTS.90[which(SST$Date == "2022-06-27")] )#18.35
+sd(SST$T..IPTS.90[which(SST$Date == "2022-06-27")])#0.13
+mean(SST$T..IPTS.90[which(SST$Date == "2022-07-19")] )#19.16
+sd(SST$T..IPTS.90[which(SST$Date == "2022-07-19")])#0.79
+mean(SST$T..IPTS.90[which(SST$Date == "2022-06-13")] )#12.37
+sd(SST$T..IPTS.90[which(SST$Date == "2022-06-13")])#0.33
+
+#two week average
+mean(SST$T..IPTS.90[which(SST$Date >= "2022-03-23" & SST$Date <= "2022-04-06")])#6.36
+sd(SST$T..IPTS.90[which(SST$Date >= "2022-03-23" & SST$Date <= "2022-04-06")])#0.47
+mean(SST$T..IPTS.90[which(SST$Date >= "2022-05-02" & SST$Date <= "2022-05-16")])#11.44
+sd(SST$T..IPTS.90[which(SST$Date >= "2022-05-02" & SST$Date <= "2022-05-16")])#0.84
+mean(SST$T..IPTS.90[which(SST$Date >= "2022-06-13" & SST$Date <= "2022-06-27")])#16.55
+sd(SST$T..IPTS.90[which(SST$Date >= "2022-06-13" & SST$Date <= "2022-06-27")])#1.83
+mean(SST$T..IPTS.90[which(SST$Date >= "2022-07-03" & SST$Date <= "2022-07-19")])#18.11
+sd(SST$T..IPTS.90[which(SST$Date >= "2022-07-03" & SST$Date <= "2022-07-19")])#0.68
+mean(SST$T..IPTS.90[which(SST$Date >= "2022-05-30" & SST$Date <= "2022-06-13")])#12.86
+sd(SST$T..IPTS.90[which(SST$Date >= "2022-05-30" & SST$Date <= "2022-06-13")])#1.52
+
+#minimum and maximum SST per collection
+#col1
+max(SST$T..IPTS.90[which(SST$Date >= "2022-03-23" & SST$Date <= "2022-04-06")])#8.33
+min(SST$T..IPTS.90[which(SST$Date >= "2022-03-23" & SST$Date <= "2022-04-06")])#5.30
+#col2
+max(SST$T..IPTS.90[which(SST$Date >= "2022-05-02" & SST$Date <= "2022-05-16")])#14.11
+min(SST$T..IPTS.90[which(SST$Date >= "2022-05-02" & SST$Date <= "2022-05-16")])#9.45
+#col4
+max(SST$T..IPTS.90[which(SST$Date >= "2022-06-13" & SST$Date <= "2022-06-27")])#19.59
+min(SST$T..IPTS.90[which(SST$Date >= "2022-06-13" & SST$Date <= "2022-06-27")])#10.97
+#col5
+max(SST$T..IPTS.90[which(SST$Date >= "2022-07-03" & SST$Date <= "2022-07-19")])#20.70
+min(SST$T..IPTS.90[which(SST$Date >= "2022-07-03" & SST$Date <= "2022-07-19")])#15.90
+#col3
+max(SST$T..IPTS.90[which(SST$Date >= "2022-05-30" & SST$Date <= "2022-06-13")])#16.71
+min(SST$T..IPTS.90[which(SST$Date >= "2022-05-30" & SST$Date <= "2022-06-13")])#9.37
+
