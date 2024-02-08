@@ -1,0 +1,82 @@
+Origin ; ID ; Species ; NCBI_Acession
+Collection 1 wild ; Col1-1 ; A. hudsonica ; OR345065 
+Collection 1 wild ; Col1-2 ; A. hudsonica ; OR345066
+Collection 1 wild ; Col1-3 ; A. hudsonica ; OR345067
+Collection 1 wild ; Col1-4 ; A. hudsonica ; OR345068 
+Collection 1 wild ; Col1-5 ; A. hudsonica ; OR345069
+Collection 1 wild ; Col1-6 ; A. hudsonica ; OR345070
+Collection 1 wild ; Col1-7 ; A. hudsonica ; OR345071
+Collection 1 wild ; Col1-8 ; A. hudsonica ; OR345072
+Collection 1 wild ; Col1-9 ; A. hudsonica ; OR345073
+Collection 1 wild ; Col1-10 ; A. hudsonica ; OR345074 
+Collection 1 wild ; Col1-11 ; failed ; NA
+Collection 1 wild ; Col1-12 ; A. hudsonica ; OR345075
+Collection 1 wild ; Col1-13 ; A. hudsonica ; OR345076
+Collection 1 wild ; Col1-14 ; failed ; NA
+Collection 1 wild ; Col1-15 ; failed ; NA
+Collection 2 wild ; Col2-1 ; failed ; NA
+Collection 2 wild ; Col2-4 ; failed ; NA
+Collection 2 wild ; Col2-6 ; failed ; NA
+Collection 2 wild ; Col2-7 ; failed ; NA
+Collection 2 wild ; Col2-8 ; A. hudsonica ; OR345077
+Collection 2 wild ; Col2-13 ; failed ; NA
+Collection 2 wild ; Col2-14 ; A. hudsonica ; OR345078
+Collection 2 wild ; Col2-15 ; A. hudsonica ; OR345079 
+Collection 2 wild ; Col2-16 ; failed ; NA
+Collection 3 wild ; Col3-3 ; failed ; NA
+Collection 3 wild ; Col3-4 ; A. hudsonica ; OR345080
+Collection 3 wild ; Col3-7 ; A. hudsonica ; OR345081
+Collection 3 wild ; Col3-9 ; A. hudsonica ; OR345082
+Collection 4 wild ; Col4-1 ; failed ; NA 
+Collection 4 wild ; Col4-2 ; A. hudsonica ; OR345083
+Collection 4 wild ; Col4-3 ; A. hudsonica ; OR345084
+Collection 4 wild ; Col4-5 ; A. hudsonica ; OR345085
+Collection 4 wild ; Col4-6 ; A. hudsonica ; OR345086
+Collection 4 wild ; Col4-7 ; A. hudsonica ; OR345087
+Collection 4 wild ; Col4-9 ; failed ; NA
+Collection 5 wild ; Col5-1 ; failed ; NA
+Collection 5 wild ; Col5-2 ; failed ; NA
+Collection 5 wild ; Col5-3 ; failed ; NA 
+Collection 5 wild ; Col5-4 ; A. hudsonica ; OR345088 
+Collection 5 wild ; Col5-5 ; A. hudsonica ; OR345089 
+Collection 5 wild ; Col5-6 ; failed ; NA
+Collection 5 wild ; Col5-8 ; failed ; NA
+Collection 5 wild ; Col5-9 ; A. hudsonica ; OR345090 
+Collection 4 wild ; 220629L4 ; failed ; NA
+Collection 4 wild ; 220630L10 ;  failed ; NA
+Collection 4 wild ; 220630R6 ; A. hudsonica ; OR345092
+Collection 4 wild ; 220629R9 ; A. hudsonica ; OR345091
+Collection 4 warm ; 220714R3 ; A. hudsonica ; OR345096
+Collection 4 warm ; 220714R5 ; A. hudsonica ; OR345097
+Collection 4 warm ; 220714R6 ; A. tonsa ; OR345098 
+Collection 4 warm ; 220715L9 ; A. hudsonica ; OR345103
+Collection 4 warm ; 220714L1 ; A. tonsa ; OR345093
+Collection 4 warm ; 220714L6 ; A. tonsa ; OR345094
+Collection 4 warm ; 220714L9 ; A. tonsa  ; OR345095
+Collection 4 warm ; 220714R8 ; A. tonsa  ; OR345099
+Collection 4 warm ; 220714R9 ; A. tonsa  ; OR345100
+Collection 4 warm ; 220715R6 ; A. tonsa  ; OR345105
+Collection 4 warm ; 220715R7 ; A. tonsa  ; OR345106
+Collection 4 warm ; 220715R10 ; A. tonsa  ; OR345104
+Collection 4 warm ; 220715L4 ; A. tonsa  ; OR345101
+Collection 4 warm ; 220715L5 ; A. tonsa  ; OR345102
+Collection 5 wild ; 220724L6 ; A. hudsonica ; OR345116
+Collection 5 wild ; 220721L9 ; failed ; NA
+Collection 5 wild ; 220721L4 ; A. hudsonica ; OR345108
+Collection 5 wild ; 220722L3 ; A. hudsonica ; OR345111
+Collection 5 wild ; 220721R5 ; A. hudsonica ;  OR345110
+Collection 5 wild ; 220721L8 ; A. hudsonica ; OR345109
+Collection 5 wild ; 220721L1 ; A. tonsa ; OR345107
+Collection 5 wild ; 220722L8 ; A. tonsa ; OR345112
+Collection 5 wild ; 220722R2 ; A. tonsa ; OR345113
+Collection 5 wild ; 220722R5 ; A. tonsa ; OR345114
+Collection 5 wild ; 220722R8 ; A. tonsa ; OR345115
+Collection 5 cold ; 220823L4 ; A. hudsonica ; OR345122
+Collection 5 cold ; 220823R5 ; A. hudsonica ; OR345124
+Collection 5 cold ; 220823R10 ; A. tonsa ; OR345123 
+Collection 5 cold ; 220824L8 ; A. tonsa ; OR345125
+Collection 5 warm ; 220804L2 ; A. tonsa ; OR345117
+Collection 5 warm ; 220804L6 ; A. tonsa ; OR345118
+Collection 5 warm ; 220804R7 ; A. tonsa ; OR345119
+Collection 5 warm ; 220805L8 ; A. tonsa ; OR345120
+Collection 5 warm ; 220805L9 ; A. tonsa ; OR345121 
