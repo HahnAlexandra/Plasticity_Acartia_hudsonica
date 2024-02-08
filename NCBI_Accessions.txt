@@ -1,4 +1,4 @@
-Origin ; ID ; Species ; NCBI_Acession
+Origin ; ID ; Species ; NCBI_Accession
 Collection 1 wild ; Col1-1 ; A. hudsonica ; OR345065 
 Collection 1 wild ; Col1-2 ; A. hudsonica ; OR345066
 Collection 1 wild ; Col1-3 ; A. hudsonica ; OR345067
