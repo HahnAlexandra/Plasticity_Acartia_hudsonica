@@ -3,7 +3,7 @@
 ##                   Alexandra Hahn                     ##
 ##########################################################
 
-#this script produces the main figures from 
+#this script produces the main figures for
 #"Phenotypic Plasticity Drives Seasonal Thermal Tolerance in a Baltic Copepod"
 
 #load necessary packages
@@ -188,9 +188,9 @@ summary_means_length <- summary(means_length)
 summary_means_length <-  summary_means_length[!(is.na(summary_means_length$emmean)),]
 
 #build reaction norm for length with raw data from subset f1 and model means
-rn_length <- ggplot(f1, aes(y = length, x = treatment, col = collection))+
-  geom_point(data = summary_means_length, 
-             aes(y = emmean, x = treatment, col = collection),
+rn_length <- ggplot(f1, aes(y = length, x = treatment, col= collection, fill = collection))+
+  geom_point(data = summary_means_length, shape = 21, col = "black", 
+             aes(y = emmean, x = treatment, fill  = collection),
              position = position_dodge(0.1), size = 3)+
   geom_errorbar(data = summary_means_length,
                 aes(y = emmean, ymin = (emmean - SE), ymax = (emmean + SE), x = treatment, col = collection),
@@ -200,12 +200,13 @@ rn_length <- ggplot(f1, aes(y = length, x = treatment, col = collection))+
             position = position_dodge(0.1),
             linetype = "solid") +
   scale_color_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
+  scale_fill_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
   theme_light(base_size = 14)+
   theme(strip.background =element_rect(fill="white"))+
   theme(strip.text = element_text(colour = 'black', size = 10))+
   geom_point(alpha = 0.2, position = position_dodge(0.1))+
   scale_x_discrete(expand = c(0.1,0))+
-  ylab("Critical thermal maximum in °C") + xlab("Treatment")+
+  ylab("Prosome length in µm") + xlab("Treatment")+
   theme(legend.position = "none") 
 
 #reaction norm for Ctmax
@@ -216,9 +217,9 @@ summary_means_Ctmax <- summary(means_Ctmax)
 summary_means_Ctmax <-  summary_means_Ctmax[!(is.na(summary_means_Ctmax$emmean)),]
 
 #build reaction norm for Ctmax with raw data from subset f1 and model means
-rn_ctmax <- ggplot(f1, aes(y = Ctmax, x = treatment, col = collection))+
-  geom_point(data = summary_means_Ctmax, 
-             aes(y = emmean, x = treatment, col = collection),
+rn_ctmax <- ggplot(f1, aes(y = Ctmax, x = treatment, col = collection, fill = collection))+
+  geom_point(data = summary_means_Ctmax, shape = 21, col = "black", 
+             aes(y = emmean, x = treatment, fill = collection),
              position = position_dodge(0.1), size = 3)+
   geom_errorbar(data = summary_means_Ctmax,
                 aes(y = emmean, ymin = (emmean - SE), ymax = (emmean + SE), x = treatment, col = collection),
@@ -228,6 +229,7 @@ rn_ctmax <- ggplot(f1, aes(y = Ctmax, x = treatment, col = collection))+
             position = position_dodge(0.1),
             linetype = "solid") +
   scale_color_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
+  scale_fill_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
   theme_light(base_size = 14)+
   theme(strip.background =element_rect(fill="white"))+
   theme(strip.text = element_text(colour = 'black', size = 10))+
@@ -237,9 +239,9 @@ rn_ctmax <- ggplot(f1, aes(y = Ctmax, x = treatment, col = collection))+
   theme(legend.position = "none") 
 
 #extract legend 
-legend4 <- get_legend(ggplot(f1, aes(y = Ctmax, x = treatment, col = collection))+
-                       scale_color_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
-                       geom_point(size = 3)+
+legend4 <- get_legend(ggplot(f1, aes(y = Ctmax, x = treatment, fill = collection))+
+                       scale_fill_manual(values = alpha(c("#3B9AB2", "#D5C660", "#EC7B00", "#F21A00")), name = "Collection")+
+                       geom_point(size = 3, shape = 21, col = "black")+
                        theme_light())
 
 #combine two plots in new window 
